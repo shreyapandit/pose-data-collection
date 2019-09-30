@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Node Kinect2 Client</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<canvas id="bodyCanvas" width="640" height="360"></canvas>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/js/pako.inflate.min.js"></script>
+	<script>
+		var socket = io.connect('/');
+		var canvas = document.getElementById('bodyCanvas');
+		var ctx = canvas.getContext('2d');
+		var colorProcessing = false;
+		var colorWorkerThread = new Worker("js/colorWorker.js");
+		// var colorWorkerThread = new Worker(
+		//
+		// 	(function(){
+		// 	    console.log("beginning....")
+		// 	    importScripts('pako.inflate.min.js');
+		// 	    var imageData;
+		//
+		// 	    function init() {
+		// 	      console.log("init worker....")
+		//
+		// 	        addEventListener('message', function (event) {
+		//
+		// 	            switch (event.data.message) {
+		// 	                case "setImageData":
+		// 	                    console.log("add messages....")
+		// 	                    imageData = event.data.imageData;
+		// 	                    break;
+		// 	                case "processImageData":
+		// 	                  console.log("add messages....")
+		// 	                  processImageData(event.data.imageBuffer);
+		// 	                  break;
+		// 	            }
+		// 	        });
+		// 	    }
+		//
+		// 	    function processImageData(compressedData) {
+		// 	      console.log("processImageData....")
+		//
+		// 	        console.log("in process image data")
+		// 	        var imageBuffer = pako.inflate(atob(compressedData));
+		// 	        var pixelArray = imageData.data;
+		// 	        var newPixelData = new Uint8Array(imageBuffer);
+		// 	        var imageDataSize = imageData.data.length;
+		// 	        for (var i = 0; i < imageDataSize; i++) {
+		// 	            imageData.data[i] = newPixelData[i];
+		// 	        }
+		// 	        self.postMessage({ "message": "imageReady", "imageData": imageData });
+		// 	    }
+		//
+		// 	    init();
+		// 	})();
+		// );
+
+		colorWorkerThread.addEventListener("message", function (event) {
+			if(event.data.message === 'imageReady') {
+								console.log(event.data.imageData);
+                ctx.putImageData(event.data.imageData, 0, 0);
+                colorProcessing = false;
+			}
+		});
+
+		colorWorkerThread.postMessage({
+			"message": "setImageData",
+			"imageData": ctx.createImageData(canvas.width, canvas.height)
+		});
+
+		socket.on('colorFrame', function(imageBuffer){
+			console.log("got colorframe")
+			if(!colorProcessing) {
+				colorProcessing = true;
+				colorWorkerThread.postMessage({ "message": "processImageData", "imageBuffer": imageBuffer });
+			}
+		});
+	</script>
+</body>
+</html>
