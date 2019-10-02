@@ -11,6 +11,7 @@
 
 
 #### TODO
+- [ ] Currently, we should manually click on "save" for downloading the skeleton json files. This should be fixed and skeleton data should be saved automatically.
 - [ ] Aligning the depth, RGB, and skeleton image streams both in terms of resolution as well as distance
 - [ ] Adding the stop and start button so that after every 3 repetition of each exercise we can stop the capture
 - [ ] Looking into more organized format for folder rather than Download folder such as "Person1-Ex2-Date"
