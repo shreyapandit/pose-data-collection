@@ -3,32 +3,25 @@
 // -----------------------------------------------------------------------
 
 (function(){
-    console.log("beginning....")
-    importScripts('pako.inflate.min.js');
+
+    importScripts('pako.inflate.min.js'); 
+
     var imageData;
 
     function init() {
-      console.log("init worker....")
-
         addEventListener('message', function (event) {
-
             switch (event.data.message) {
                 case "setImageData":
-                    console.log("add messages 1....")
                     imageData = event.data.imageData;
                     break;
                 case "processImageData":
-                  console.log("add messages 2....")
-                  processImageData(event.data.imageBuffer);
-                  break;
+                    processImageData(event.data.imageBuffer);
+                    break;
             }
         });
     }
 
     function processImageData(compressedData) {
-      console.log("processImageData....")
-
-        console.log("in process image data")
         var imageBuffer = pako.inflate(atob(compressedData));
         var pixelArray = imageData.data;
         var newPixelData = new Uint8Array(imageBuffer);

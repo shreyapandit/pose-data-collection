@@ -4,15 +4,13 @@ var Kinect2 = require('kinect2'), //change to 'kinect2' in a project of your own
 	server = require('http').createServer(app),
 	io = require('socket.io').listen(server),
 	zlib = require('zlib');
+	require( './js/pako.inflate.min.js');
+	var config = require( './public/js/config.js');
 
-  // const bmp = require('bmp-ts').default;
-var fs = require("fs");
+	// const bmp = require('bmp-ts').default;
+	var fs = require("fs");
 
-require( './js/pako.inflate.min.js');
 
-var kinect = new Kinect2();
-
-if(kinect.open()) {
 	server.listen(8000);
 	console.log('Server listening on port 8000');
 	console.log('Point your browser to http://localhost:8000');
@@ -22,6 +20,11 @@ if(kinect.open()) {
 	});
 
 	app.use(express.static(__dirname + '/public'));
+
+	var kinect = new Kinect2();
+
+if(kinect.open()) {
+
 
 	// compression is used as a factor to resize the image
 	// the higher this number, the smaller the image
@@ -66,11 +69,9 @@ if(kinect.open()) {
 				}
 			}
 
-      fs.writeFileSync('./data/image_' + Date.now() +'.bmp', data);
+      fs.writeFileSync('./data/image_' + config.currentConfig.name + "_" + config..currentConfig.sessionID + "_" + Date.now() +'.bmp', data);
 
       var buffer = data.toString('base64');
-      // base64Img.img(buffer, "test.png",  function(err, filepath) {});
-
 			zlib.deflate(resizedBuffer, function(err, result){
 				if(!err) {
 					var buffer = result.toString('base64');
