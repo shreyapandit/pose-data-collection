@@ -1,11 +1,28 @@
-// let config = currentConfig;
-// console.log(config.name);
 
 var frames = [];
 
 var socket = io.connect('/');
 var canvas = document.getElementById('bodyCanvas');
 var ctx = canvas.getContext('2d');
+
+var rgbcanvas = document.getElementById('rgbCanvas');
+// var rgbctx = rgbcanvas.getContext('2d');
+
+var colorProcessing = false;
+var colorWorkerThread = new Worker("js/colorWorker.js");
+
+colorWorkerThread.addEventListener("message", function (event) {
+    if(event.data.message === 'imageReady') {
+        // console.log(event.data.imageData);
+        ctx.putImageData(event.data.imageData, 0, 0);
+        colorProcessing = false;
+    }
+});
+
+colorWorkerThread.postMessage({
+    "message": "setImageData",
+    "imageData": ctx.createImageData(canvas.width, canvas.height)
+});
 // var colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
 let liveBodyColor = "#7BE39F";
 let commonBlue = "#1E89FB";
@@ -73,18 +90,18 @@ function drawBody(parameters, color, jointColor, drawCircle = true) {
     // }
     //connect all the joints with the order defined in jointType
 
-    ctx.beginPath();
-    ctx.moveTo(body.joints[7].depthX * width, body.joints[7].depthY * height);
-    jointType.forEach(function (jointType) {
-        ctx.lineTo(body.joints[jointType].depthX * width, body.joints[jointType].depthY * height);
-        ctx.moveTo(body.joints[jointType].depthX * width, body.joints[jointType].depthY * height);
-
-    });
-
-    ctx.lineWidth = 8;
-    ctx.strokeStyle = color;
-    ctx.stroke();
-    ctx.closePath();
+    // ctx.beginPath();
+    // ctx.moveTo(body.joints[7].depthX * width, body.joints[7].depthY * height);
+    // jointType.forEach(function (jointType) {
+    //     ctx.lineTo(body.joints[jointType].depthX * width, body.joints[jointType].depthY * height);
+    //     ctx.moveTo(body.joints[jointType].depthX * width, body.joints[jointType].depthY * height);
+    //
+    // });
+    //
+    // ctx.lineWidth = 8;
+    // ctx.strokeStyle = color;
+    // ctx.stroke();
+    // ctx.closePath();
 }
 
 //function that draws each joint as a yellow round dot
@@ -122,8 +139,11 @@ function download(filename, text) {
 
 var timeLastPushed = Date.now();
 var count = 1;
+
 socket.on('bodyFrame', function (bodyFrame) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    console.log("got bodyframe")
+
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
     var index = 0;
     bodyFrame.bodies.forEach(function (body) {
         if (body.tracked) {
@@ -151,5 +171,19 @@ socket.on('bodyFrame', function (bodyFrame) {
             index++;
         }
     });
+});
+
+// var socket = io.connect('/');
+// var canvas = document.getElementById('bodyCanvas');
+// var ctx = canvas.getContext('2d');
+
+
+
+socket.on('colorFrame', function(imageBuffer){
+    console.log("got colorframe")
+    if(!colorProcessing) {
+        colorProcessing = true;
+        colorWorkerThread.postMessage({ "message": "processImageData", "imageBuffer": imageBuffer });
+    }
 });
 

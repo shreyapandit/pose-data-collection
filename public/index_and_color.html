@@ -3,21 +3,20 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Node Kinect2 Client</title>
+    <title>HPE Data Collection tool</title>
     <link rel="stylesheet" href="">
 </head>
 <body>
-<div id="test">
-    <canvas id="bodyCanvas" width="800px" height="800px"></canvas>
-</div>
+<canvas id="bodyCanvas" width="640" height="480"></canvas>
+<!--<canvas id="rgbCanvas" width="640" height="480"></canvas>-->
+
 <script src="/socket.io/socket.io.js"></script>
+<script src="/js/pako.inflate.min.js"></script>
+<script src="//html2canvas.hertzen.com/dist/html2canvas.js"></script>
 <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
-
-<script src="//html2canvas.hertzen.com/dist/html2canvas.js"></script>
-
-<script src="/js/pako.inflate.min.js"></script>
 <!--<script src="/js/config.js"></script>-->
-<script src="/js/skeletalTracking.js"></script>
+<script src="/js/skeletalTrackingUpdated.js"></script>
+
 </body>
 </html>

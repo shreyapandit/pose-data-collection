@@ -15,6 +15,7 @@
 		"bmp-ts": "^1.0.0",
 		"express": "~4.9.5",
 		"fs": "0.0.1-security",
+		"kinect2": "^0.1.7",
 		"socket.io": "~1.1.0"
 	}
 }

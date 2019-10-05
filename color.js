@@ -4,11 +4,13 @@ var Kinect2 = require('kinect2'), //change to 'kinect2' in a project of your own
 	server = require('http').createServer(app),
 	io = require('socket.io').listen(server),
 	zlib = require('zlib');
-	require( './js/pako.inflate.min.js');
-	var config = require( './public/js/config.js');
-
 	// const bmp = require('bmp-ts').default;
 	var fs = require("fs");
+	require( './js/pako.inflate.min.js');
+	var config = require( './public/js/config.js');
+	console.log(config);
+	var kinect = new Kinect2();
+
 
 
 	server.listen(8000);
@@ -21,7 +23,6 @@ var Kinect2 = require('kinect2'), //change to 'kinect2' in a project of your own
 
 	app.use(express.static(__dirname + '/public'));
 
-	var kinect = new Kinect2();
 
 if(kinect.open()) {
 
@@ -41,7 +42,9 @@ if(kinect.open()) {
 	//we will send a smaller image (1 / 10th size) over the network
 	var resizedBuffer = new Buffer(resizedLength);
 	var compressing = false;
-  var count = 0
+
+
+	var count = 0
 	kinect.on('colorFrame', function(data){
     count++;
     // console.log("saving frame as bitmap");
@@ -69,7 +72,7 @@ if(kinect.open()) {
 				}
 			}
 
-      fs.writeFileSync('./data/image_' + config.currentConfig.name + "_" + config..currentConfig.sessionID + "_" + Date.now() +'.bmp', data);
+      fs.writeFileSync('./data/image_' + config.name + "_" + config.sessionID + "_" + Date.now() +'.bmp', data);
 
       var buffer = data.toString('base64');
 			zlib.deflate(resizedBuffer, function(err, result){
