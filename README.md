@@ -1,10 +1,11 @@
-### pose-data-collection
+## The HPE data collection tool
 
 #### Pre-installation
 
 Configure the data collection parameters in the file `pose-data-collection/public/js/config.js`
 
 Edit the below block to provide Name and Session ID to be used by the app. Please separate using underscores. You can add the Name, Session ID and snippetLength (how long do you want each video to be. Used to collect skeleton data over that many milliseconds)
+
 
 ```       
         //Please put name and session id joined by _ for example Shreya_Pandit
@@ -19,12 +20,11 @@ Edit the below block to provide Name and Session ID to be used by the app. Pleas
 
 2. cd into the directory where the project exists, and run npm install
 
-3. To run the app, start the server as follows
-```node index_and_color.js```
+3. To run the app, start the server as follows: `node index_and_color.js`
 
 4. Open a chrome browser at port 8003: https://localhost:8003. You should see a skeleton version of yourself overlaid on the RGB scene. 
 
-3. Once the subject is in position, Click "Start". This will start saving RGB data as raw BMP files for every frame received. Each frame will have a timestamp acssociated with it. The Skeletal data is saved as burst of N seconds, as a txt file. Both data are saved under pose-data-collection/data_NameInConfig_SessionIdInConfig/
+3. Once the subject is in position, Click "Start". This will start saving RGB data as raw BMP files for every frame received. Each frame will have a timestamp acssociated with it. The Skeletal data is saved as burst of N seconds, as a txt file. Both data are saved under `pose-data-collection/data_NameInConfig_SessionIdInConfig/`
 
 4. Once data is collected, click "Stop".
 
