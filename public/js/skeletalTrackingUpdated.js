@@ -21,10 +21,12 @@ colorWorkerThread.postMessage({
     "message": "setImageData",
     "imageData": ctx.createImageData(canvas.width, canvas.height)
 });
-// var colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
+
+
 let liveBodyColor = "#7BE39F";
 let commonBlue = "#1E89FB";
-let jointType = Array.from(Array(25).keys());
+let jointType = Array.from(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 20));
+
 //canvas dimension
 let width = canvas.width;
 let height = canvas.height;
@@ -61,26 +63,12 @@ function drawJoints(parameters, ctx) {
     }
 }
 
-
-var count = 1;
-
 socket.on('bodyFrame', function (bodyFrame) {
-
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
     var index = 0;
     bodyFrame.bodies.forEach(function (body) {
+
         if (body.tracked) {
-
-            if ((Date.now() - timeLastPushed) > 5000) {
-                //Approximately between 10 and 11 seconds have passed since last frame was pushed
-                drawBody(body, "#ff00ff", commonBlue);
-                console.log("Adding new bodyframes....")
-
-                timeLastPushed = Date.now();
-            } else {
-
-                drawBody(body, liveBodyColor, commonBlue);
-            }
+            drawBody(body, liveBodyColor, commonBlue);
             index++;
         }
     });

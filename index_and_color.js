@@ -49,7 +49,8 @@ if (kinect.open()) {
     var timeLastPushed = Date.now();
 
     kinect.on('bodyFrame', function(bodyFrame){
-    	io.sockets.emit('bodyFrame', bodyFrame);
+
+        io.sockets.emit('bodyFrame', bodyFrame);
         // ctx.clearRect(0, 0, canvas.width, canvas.height);
         var index = 0;
         bodyFrame.bodies.forEach(function (body) {
