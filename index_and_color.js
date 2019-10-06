@@ -24,14 +24,15 @@ var resizedBuffer = new Buffer(resizedLength);
 var compressing = false;
 var count = 0;
 let canSave = false;
-
 var kinect = new Kinect2();
-
+var timeLastPushed = 0;
 
 io.on('connection', function (socket) {
     socket.on("mytoggle", (data) => {
         canSave = data;
         console.log("cansave is " + canSave);
+        timeLastPushed = Date.now();
+
     });
 });
 

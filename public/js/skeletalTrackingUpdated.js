@@ -30,33 +30,6 @@ let width = canvas.width;
 let height = canvas.height;
 let radius = 3; //radius of joint circle
 
-// handstate circle size
-var HANDSIZE = 20;
-
-// closed hand state color
-var HANDCLOSEDCOLOR = "red";
-
-// open hand state color
-var HANDOPENCOLOR = "green";
-
-// lasso hand state color
-var HANDLASSOCOLOR = "blue";
-
-function updateHandState(handState, jointPoint) {
-    switch (handState) {
-        case 3:
-            drawHand(jointPoint, HANDCLOSEDCOLOR);
-            break;
-
-        case 2:
-            drawHand(jointPoint, HANDOPENCOLOR);
-            break;
-
-        case 4:
-            drawHand(jointPoint, HANDLASSOCOLOR);
-            break;
-    }
-}
 
 function drawBody(parameters, color, jointColor, drawCircle = true) {
 
@@ -89,7 +62,6 @@ function drawJoints(parameters, ctx) {
 }
 
 
-var timeLastPushed = Date.now();
 var count = 1;
 
 socket.on('bodyFrame', function (bodyFrame) {
