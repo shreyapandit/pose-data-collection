@@ -1,5 +1,6 @@
 var scalingFactor = ((640*1080)/1920);
 console.log(scalingFactor);
+let canSave = false;
 
 var socket = io.connect('/');
 var canvas = document.getElementById('bodyCanvas');
@@ -121,3 +122,9 @@ socket.on('colorFrame', function(imageBuffer){
     }
 });
 
+function toggleSave() {
+    canSave = (!canSave);
+    console.log("cansave: " + canSave);
+    socket.emit("mytoggle", canSave)
+    document.getElementById("toggleSave").innerHTML = canSave ? "Stop" : "Start";
+}

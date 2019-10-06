@@ -11,25 +11,29 @@ var config = require( './public/js/config.js');
 var frames = [];
 var dir = 'data_'+ config.name + "_" + config.sessionID + '/' ;
 
-
-console.log(config);
-
-var kinect = new Kinect2();
-
-
 var compression = 3;
-
 var origWidth = 1920;
 var origHeight = 1080;
 var origLength = 4 * origWidth * origHeight;
 var compressedWidth = origWidth / compression;
 var compressedHeight = origHeight / compression;
 var resizedLength = 4 * compressedWidth * compressedHeight;
+
 //we will send a smaller image (1 / 10th size) over the network
 var resizedBuffer = new Buffer(resizedLength);
 var compressing = false;
-var count = 0
+var count = 0;
+let canSave = false;
 
+var kinect = new Kinect2();
+
+
+io.on('connection', function (socket) {
+    socket.on("mytoggle", (data) => {
+        canSave = data;
+        console.log("cansave is " + canSave);
+    });
+});
 
 if (kinect.open()) {
 
@@ -50,36 +54,26 @@ if (kinect.open()) {
         bodyFrame.bodies.forEach(function (body) {
             if (body.tracked) {
 
-                if ((Date.now() - timeLastPushed) > 5000) {
-                    //Approximately between 10 and 11 seconds have passed since last frame was pushed
-                    // drawBody(body, "#ff00ff", commonBlue);
-                    console.log("Adding new bodyframes....")
-                    // frames.push(body);
-
-                    // html2canvas(document.querySelector("#test")).then(function (canvas2) {
-                    //     // Export the canvas to its data URI representation
-                    //     var a = document.createElement('a');
-                    //     download('skeleton_' + config.name + "_" + config.sessionID + "_" + Date.now(), JSON.stringify(frames))
-                    //
-                    //     count++;
-                    // });
-
+                if (canSave && (Date.now() - timeLastPushed) > config.snippetLength) {
+                    console.log("Saving new bodyFrames because Start Clicked and 8 seconds have passed.");
                     if (!fs.existsSync(dir)){
                         fs.mkdirSync(dir);
                     }
                     fs.writeFile(dir + 'skeleton_' + Date.now(), JSON.stringify(frames), (err) => {
                         // throws an error, you could also catch it here
                         if (err) throw err;
-
                         // success case, the file was saved
-                        console.log('skeleton saved!');
+                        console.log('skeleton data saved!');
                     });
 
                     timeLastPushed = Date.now();
                 } else {
-                    bodyFrame["timestamp"] = Date.now();
-                    frames.push(bodyFrame);
-                    // drawBody(body, liveBodyColor, commonBlue);
+                    if (canSave) {
+                        // console.log("Pushing skeleton frames to buffer because Start is clicked, not persisting yet.");
+                        body["timestamp"] = Date.now();
+                        frames.push(body);
+
+                    }
                 }
                 index++;
             }
@@ -87,12 +81,13 @@ if (kinect.open()) {
     });
 
     kinect.on('colorFrame', function(data){
+
         count++;
-        // console.log("saving frame as bitmap");
-        // var bmpData = bmp.decode(data);
 
+        if (canSave) {
+            fs.writeFileSync(dir + 'rgb' + "_" + Date.now() + '.bmp', data);
+        }
 
-        // console.log(data)
         //compress the depth data using zlib
         if(!compressing) {
             compressing = true;
@@ -113,8 +108,8 @@ if (kinect.open()) {
                 }
             }
 
-            fs.writeFileSync(dir + 'rgb'+  "_" + Date.now() +'.bmp', data);
 
+            //send frame to client to display regardless of Start pressed or not.
             var buffer = data.toString('base64');
             zlib.deflate(resizedBuffer, function(err, result){
                 if(!err) {
