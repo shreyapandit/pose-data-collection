@@ -13,7 +13,7 @@
 		"base64-img": "^1.0.4",
 		"bmp-js": "^0.1.0",
 		"bmp-ts": "^1.0.0",
-		"express": "~4.9.5",
+		"express": "~4.17.3",
 		"fs": "0.0.1-security",
 		"kinect2": "^0.1.7",
 		"socket.io": "~1.1.0"
